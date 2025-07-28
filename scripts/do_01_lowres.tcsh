@@ -2,7 +2,11 @@
 
 # LOWRES: make a copy of lower res (4mm voxel) data
 
-# Run it from its partner run*.tcsh script (either slurm/swarm or desktop).
+# This script processes a corresponding do_*.tcsh script.
+# Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
+
+# To execute:  
+#     tcsh RUN_SCRIPT_NAME
 
 # ---------------------------------------------------------------------------
 

@@ -2,8 +2,8 @@
 
 # AUG: run data augmentation for VNET; for both train and validation
 
-# Process a single subj+ses pair. Run it from its partner run*.tcsh script.
-# Run on a slurm/swarm system (like Biowulf) or on a desktop.
+# Run this script from its partner run*.tcsh script.
+# Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
 
 # ---------------------------------------------------------------------------
 

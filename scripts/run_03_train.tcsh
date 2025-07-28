@@ -2,8 +2,8 @@
 
 # TRAIN: run the VNET on training data
 
-# Process corresponding do_*.tcsh script.
-# Run on a slurm/swarm system (like Biowulf) or on a desktop.
+# This script processes a corresponding do_*.tcsh script.
+# Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
 
 # To execute:  
 #     tcsh RUN_SCRIPT_NAME

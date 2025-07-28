@@ -1,11 +1,9 @@
 #!/bin/tcsh
 
 # AUG: run data augmentation for VNET 
-# -> NB: no looping or swarming here; simple logged exec of do*.tcsh script
 
-# Process one or more subjects via corresponding do_*.tcsh script,
-# looping over subj+ses pairs.
-# Run on a slurm/swarm system (like Biowulf) or on a desktop.
+# This script processes a corresponding do_*.tcsh script.
+# Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
 
 # To execute:  
 #     tcsh RUN_SCRIPT_NAME
