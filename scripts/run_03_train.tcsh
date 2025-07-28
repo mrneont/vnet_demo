@@ -64,8 +64,8 @@ swarm                                                          \
     #--partition=norm,quick                                     \
     --partition=gpu                                            \
     --threads-per-process=8                                    \
-    --gb-per-process=60                                        \
-    --time=12:00:00                                            \
+    --gb-per-process=5                                        \
+    --time=02:00:00                                            \
     ##--gres=lscratch:10                                         \
     --gres=gpu:a100:1                                          \
     --logdir=${cdir_log}                                       \

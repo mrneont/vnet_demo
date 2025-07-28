@@ -94,18 +94,14 @@ cd ${dir_vnet_run}
 python run_ml_ss.py                                                          \
     -input_dir           ${dir_aug}                                          \
     -output_dir          ${sdir_out}                                         \
-    -mask_everyn 2 -chpt_everyn 2   \
-    -trb         3   \
-    ###-L 'WtSorensen_Dice' \
-    -tr_shuf 1 \
-    -dn 'z_scoring' \
+    -train_batch_size         3                             \
+    -num_epochs 50               \
+    -do_write_nifti  1              \
+    -save_mask_list 5 9 19 29 39 49           \
+    -save_checkpoint_rate 10  \
+    -do_train_shuffle 1         \
+    -norm_mode 'z_scoring'      \
     -verb 1 
-
-#-nth_epoch_out       2                                                   \
-#    -nth_mask_out        2                                                   \
-#    -chpt_oplist         '0 2 4' \
-#    -mask_oplist         '0 2 4' \
-#    -verb                1
 
 if ( ${status} ) then
     set ecode = 2
