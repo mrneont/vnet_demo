@@ -57,7 +57,7 @@ cd ${dir_scr}
 echo "++ And start running: ${scr_swarm}"
 
 # ***special for biowulf setup
-source /data/NIMH_SSCC/ptaylor/miniconda3/etc/profile.d/conda.csh
+source /data/NIMH_SSCC/ptaylor/miniconda3/etc/profile.d/conda.csh >& /dev/null 
 
 swarm                                                          \
     -f ${scr_swarm}                                            \

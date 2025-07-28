@@ -12,7 +12,8 @@
 
 if ( "`whoami`" == "taylorpa3" ) then
     echo "++ Special stage to prepare for running on biowulf"
-    source /data/NIMH_SSCC/ptaylor/miniconda3/etc/profile.d/conda.csh
+    source /data/NIMH_SSCC/ptaylor/miniconda3/etc/profile.d/conda.csh   \
+           >& /dev/null
 endif
 
 # ---------------------------------------------------------------------------
