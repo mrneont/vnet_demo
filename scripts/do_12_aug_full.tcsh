@@ -1,6 +1,7 @@
 #!/bin/tcsh
 
-# TRAIN: run the VNET on training data
+# AUG: run data augmentation for VNET; for both train and validation
+# -> on FULL RESOLUTION data
 
 # Run this script from its partner run*.tcsh script.
 # Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
@@ -44,14 +45,14 @@ set dir_vnet_run   = ${dir_inroot}/vnet_afni_run     # dir with used vnet code
 set dir_basic      = ${dir_inroot}/data_00_basic
 set dir_lowres     = ${dir_inroot}/data_01_lowres
 set dir_aug        = ${dir_inroot}/data_02_aug
-set dir_train      = ${dir_inroot}/data_03_train
+set dir_aug_full   = ${dir_inroot}/data_12_aug_full
 
 # supplementary directory (reference data, etc.)
 set dir_suppl      = ${dir_inroot}/supplements
 
 # set output directory
-set sdir_out = ${dir_train}
-set lab_out  = "TRAIN_VNET"
+set sdir_out = ${dir_aug_full}
+set lab_out  = "DATA_AUG"
 
 # ----------------------------- biowulf-cmd --------------------------------
 if ( $use_slurm ) then
@@ -78,9 +79,7 @@ endif
 \mkdir -p ${sdir_out}
 
 # from ${dir_suppl}/environment_vnet_tech_2024_01_02.yml
-##echo "++ Load conda env: test_cuda_env2"
-##conda activate test_cuda_env2
-echo "++ Load conda env: vnet_tech_2024_01_02"
+echo "++ Load conda env vnet_tech_2024_01_02"
 conda activate vnet_tech_2024_01_02
 
 if ( $status ) then
@@ -89,41 +88,32 @@ if ( $status ) then
     goto COPY_AND_EXIT
 endif
 
-# at the moment, need to run this program from the directory that has
-# related scripts
-#### NB: to run sorensen, validation dsets also need EDT
-cd ${dir_vnet_run}
-python run_ml_ss.py                                                          \
-    -input_dir             ${dir_aug}                                        \
-    -output_dir            ${sdir_out}                                       \
-    -train_batch_size      3                                                 \
-    -num_epochs            50                                                \
-    -do_write_nifti        1                                                 \
-    -save_mask_list        5 9 19 29 39 49                                   \
-    -save_checkpoint_rate  10                                                \
-    -loss_func             'WtSorensen_Dice'                                 \
-    -verb                  1
+# at the moment, need to run augmentation from dir that has related scripts
+cd ${dir_vnet_run}/data_augmentation_scripts
+
+# augment the training data
+python data_augmentation_wrapper.py                                          \
+    -input_dir           ${dir_basic}/training                               \
+    -output_dir          ${sdir_out}/training                                \
+    -num_cp              3                                                   \
+    -exec_mode           swarm
 
 if ( ${status} ) then
     set ecode = 2
     goto COPY_AND_EXIT
 endif
 
-if ( 0 ) then
-   `python run_ml_ss.py 
-      -d 'training_dataset_path' 
-      -o 'output_dir_path' 
-      -e epoch_num 
-      -s seed 
-      -l learning_rate 
-      -dn data_normalization 
-      -L  Loss_function 
-      -W  write_to_output_dir_path 
-      -trb batch_size_training 
-      -tr_shuf shuffle_flag 
-      -mask_everyn 1 
-      -chpt_everyn 1 
-      -r 1 `
+# ... and for creating VNET, we need to copy over the validation data, too
+echo "++ Copy validation tree (via augmentation of only 1 'copy')"
+python data_augmentation_wrapper.py                                          \
+    -input_dir           ${dir_basic}/validation                             \
+    -output_dir          ${sdir_out}/validation                              \
+    -num_cp              1                                                   \
+    -exec_mode           swarm
+
+if ( ${status} ) then
+    set ecode = 3
+    goto COPY_AND_EXIT
 endif
 
 echo "++ FINISHED ${lab_out}"

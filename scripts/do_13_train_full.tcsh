@@ -1,6 +1,7 @@
 #!/bin/tcsh
 
 # TRAIN: run the VNET on training data
+# -> on FULL RES data
 
 # Run this script from its partner run*.tcsh script.
 # Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
@@ -45,13 +46,15 @@ set dir_basic      = ${dir_inroot}/data_00_basic
 set dir_lowres     = ${dir_inroot}/data_01_lowres
 set dir_aug        = ${dir_inroot}/data_02_aug
 set dir_train      = ${dir_inroot}/data_03_train
+set dir_aug_full   = ${dir_inroot}/data_12_aug_full
+set dir_train_full = ${dir_inroot}/data_13_train_full
 
 # supplementary directory (reference data, etc.)
 set dir_suppl      = ${dir_inroot}/supplements
 
-# set output directory
-set sdir_out = ${dir_train}
-set lab_out  = "TRAIN_VNET"
+# set output directory **
+set sdir_out = ${dir_train_full}
+set lab_out  = "TRAIN_FULL_VNET"
 
 # ----------------------------- biowulf-cmd --------------------------------
 if ( $use_slurm ) then
@@ -78,8 +81,8 @@ endif
 \mkdir -p ${sdir_out}
 
 # from ${dir_suppl}/environment_vnet_tech_2024_01_02.yml
-##echo "++ Load conda env: test_cuda_env2"
-##conda activate test_cuda_env2
+###echo "++ Load conda env: test_cuda_env2"
+###conda activate test_cuda_env2
 echo "++ Load conda env: vnet_tech_2024_01_02"
 conda activate vnet_tech_2024_01_02
 
@@ -94,12 +97,12 @@ endif
 #### NB: to run sorensen, validation dsets also need EDT
 cd ${dir_vnet_run}
 python run_ml_ss.py                                                          \
-    -input_dir             ${dir_aug}                                        \
+    -input_dir             ${dir_aug_full}                                   \
     -output_dir            ${sdir_out}                                       \
     -train_batch_size      3                                                 \
-    -num_epochs            50                                                \
+    -num_epochs            20                                                \
     -do_write_nifti        1                                                 \
-    -save_mask_list        5 9 19 29 39 49                                   \
+    -save_mask_rate        5                                                 \
     -save_checkpoint_rate  10                                                \
     -loss_func             'WtSorensen_Dice'                                 \
     -verb                  1
