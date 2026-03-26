@@ -56,9 +56,11 @@ echo "++ Set ECODE"
 set ecode = 0
 
 
-set parent_dir    = $1  # cmd line arguement 
-set dset_pred_mask = $2
+set parent_dir           = $1  # cmd line arguement 
+set dset_pred_mask       = $2
+set pred_mask_output_dir = $3
 
+echo ${pred_mask_output_dir}
 
 set dir_target = "target"
 set dir_pred_mask = "pred_mask"
@@ -70,6 +72,15 @@ set dir_combo_full = "combo_full"
 # set output directory
 set sdir_out = ${dir_combo_full}
 set lab_out  = "MAKE_COMBO"
+
+
+set pred_mask_key = "ch01_ep-110_train"
+set orig_key      = "orig_train_subj_sub"
+set target_key    = "target_000_train_subj_sub"
+
+
+mkdir -p ${parent_dir}/${dir_pred_plus_target}
+mkdir -p ${parent_dir}/${dir_combo}
 
 # ----------------------------- biowulf-cmd --------------------------------
 if ( $use_slurm ) then
@@ -93,7 +104,8 @@ endif
 # run programs
 # ---------------------------------------------------------------------------
 
-# make output top-level dir
+
+# make output top-level dir to write the outcome of running this script
 \mkdir -p ${sdir_out}
 
 # from ${dir_suppl}/environment_vnet_tech_2024_01_02.yml
@@ -140,13 +152,13 @@ echo "${parent_dir}/${dir_target}/${dset_target}"
 	# b is FS/target mask mapped to 2(blue)
 3dcalc -prefix ${parent_dir}/${dir_pred_plus_target}/${dset_out}\
     -expr 'bool(ispositive(a-0.5)+b)*(4-(ispositive(a-0.5)+2*b))' \
-    -a ${parent_dir}/${dir_pred_mask}/${dset_pred_mask} \
-    -b ${parent_dir}/${dir_target}/${dset_target} \
+    -a ${pred_mask_output_dir}/${dset_pred_mask} \
+    -b ${pred_mask_output_dir}/${dset_target} \
     -overwrite 
 
      # make three PNGs
 @chauffeur_afni                                  \
-        -ulay  ${parent_dir}/${dir_orig}/${dset_orig}                          \
+        -ulay  ${pred_mask_output_dir}/${dset_orig}                          \
         -olay  ${parent_dir}/${dir_pred_plus_target}/${dset_out}                          \
         -box_focus_slices AMASK_FOCUS_OLAY           \
         -ulay_range 0% 98%                           \

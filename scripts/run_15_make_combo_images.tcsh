@@ -51,48 +51,40 @@ set dir_logs       = "logs"
 
 
 mkdir -p ${dir_parent}/${make_combo_images_dir}
-mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_orig} 
-mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_target} 
-mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_pred_mask} 
-mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_pred_plus_target}
-mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_combo}
+#mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_orig} 
+#mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_target} 
+#mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_pred_mask} 
+#mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_pred_plus_target}
+#mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_combo}
 #mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_swarm}
 mkdir -p ${dir_parent}/${make_combo_images_dir}/${dir_logs}
 
 
-set pred_mask_key = "ch01_ep-100_train"
+set pred_mask_key = "ch01_ep-000_train"
 set orig_key      = "orig_train_subj_sub"
 set target_key    = "target_000_train_subj_sub"
 
-#copy the pred_masks
-
-cp  ${pred_mask_output_dir}/*"${pred_mask_key}"*   \
-                    ${dir_parent}/${make_combo_images_dir}/${dir_pred_mask} 
-
-#copy the original data 
-cp  ${pred_mask_output_dir}/*"${orig_key}"*   \
-                    ${dir_parent}/${make_combo_images_dir}/${dir_orig} 
-
-#copy the target data 
-cp  ${pred_mask_output_dir}/*"${target_key}"*   \
-                    ${dir_parent}/${make_combo_images_dir}/${dir_target} 
 
 
-cp do_make_combo.tcsh  ${dir_parent}/${make_combo_images_dir}
 
-cd ${dir_parent}/${make_combo_images_dir}/${dir_pred_mask} 
-/echo ${PWD}
+cp do_15_make_combo.tcsh  ${dir_parent}/${make_combo_images_dir}
+
+cd ${pred_mask_output_dir} 
+echo ${PWD}
 
 
 
 
 #cat swarm_make_combo.txt
-set all_pred_mask = (*.nii.gz)
+#set all_pred_mask = (*.nii.gz)
+set all_pred_mask = (*${pred_mask_key}*.nii.gz)
 
+
+#echo $all_pred_mask
 #do Pred_mask + target
 foreach dset_pred_mask ( ${all_pred_mask} )
 
-    echo ${dset_pred_mask}
+    #echo ${dset_pred_mask}
     #echo "tcsh -xf do_make_combo.tcsh ${make_combo_images_dir} ${dset_pred_mask} \\"    >> ${scr_swarm}
     
     set prefix = `python -c "print(''.join('sub-' + '${dset_pred_mask}'.split('sub-')[1]))"`
@@ -100,7 +92,8 @@ foreach dset_pred_mask ( ${all_pred_mask} )
     set logtxt = `python -c "print('log_'+ '${prefix}'+'.txt')"`
     #echo ${logtxt}
 
-    echo "tcsh -xf ${dir_parent}/${make_combo_images_dir}/do_make_combo.tcsh ${dir_parent}/${make_combo_images_dir} ${dset_pred_mask}  |& tee ../${dir_logs}/${logtxt}" >> ${dir_parent}/${make_combo_images_dir}/${scr_swarm}
+    echo "tcsh -xf ${dir_parent}/${make_combo_images_dir}/do_15_make_combo.tcsh ${dir_parent}/${make_combo_images_dir} ${dset_pred_mask} ${pred_mask_output_dir} |& tee ${dir_parent}/${make_combo_images_dir}/${dir_logs}/${logtxt}" >> ${dir_parent}/${make_combo_images_dir}/${scr_swarm}
+
 
     
    
