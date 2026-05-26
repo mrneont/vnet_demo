@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
-# TRAIN: run the VNET on training data
-# -> on FULL RES
+# TEST: run the VNET on test data
+# 
 
 # This script processes a corresponding do_*.tcsh script.
 # Can be run on either a slurm/swarm system (like Biowulf) or on a desktop.
